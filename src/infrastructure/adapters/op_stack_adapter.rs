@@ -1,5 +1,6 @@
 use crate::domain::{
-    entities::block::Block, errors::error::AppError,
+    entities::block::{Block, BlockHash, BlockNumber, TransactionHash},
+    errors::error::AppError,
     services::blockchain_polling_service::BlockchainPollingService,
 };
 use axum::{
@@ -53,12 +54,12 @@ impl BlockchainPollingService for OpStackAdapter {
         //    println!("Got transaction: {}", serde_json::to_string(&transaction)?);
 
         let block = Block {
-            hash: latest_block.hash.unwrap().encode_hex(),
-            number: latest_block.number.unwrap().as_u64(),
+            hash: BlockHash(latest_block.hash.unwrap().encode_hex()),
+            number: BlockNumber(latest_block.number.unwrap().as_u64()),
             transaction_hashes: latest_block
                 .transactions
                 .iter()
-                .map(|hash| hash.encode_hex())
+                .map(|hash| TransactionHash(hash.encode_hex()))
                 .collect(),
         };
 
